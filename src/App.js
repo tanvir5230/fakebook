@@ -1,25 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import React, { useState, useEffect } from "react";
+import Post from "./components/Post";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import PostDetail from "./components/PostDetail";
 function App() {
+  const loadData = async () => {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await response.json();
+    setPosts(data);
+  };
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    loadData();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/">
+          <Post posts={posts} />
+        </Route>
+        <Route exact path="/post">
+          <Post posts={posts} />
+        </Route>
+        <Route path="/post/:id">
+          <PostDetail posts={posts} />
+        </Route>
+        <Redirect to="/post" />
+      </Switch>
+    </BrowserRouter>
   );
 }
 
